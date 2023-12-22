@@ -1,7 +1,7 @@
 import React from 'react'
 
 import Form from '../Form'
-import Toast from '../Toast'
+import ToastShelf from '../ToastShelf'
 
 import styles from './ToastPlayground.module.css'
 
@@ -15,7 +15,7 @@ function ToastPlayground() {
         <h1>Toast Playground</h1>
       </header>
       <div className={styles.controlsWrapper}>
-        <Toast />
+        <ToastShelf />
         <Form toastvariants={VARIANT_OPTIONS} />
       </div>
     </div>

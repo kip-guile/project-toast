@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext } from 'react'
 import {
   AlertOctagon,
   AlertTriangle,
@@ -7,7 +7,7 @@ import {
   X,
 } from 'react-feather'
 
-import { ToastContext } from '../App'
+import { ToastContext } from '../ToastProvider'
 
 import VisuallyHidden from '../VisuallyHidden'
 
@@ -20,25 +20,15 @@ const ICONS_BY_VARIANT = {
   error: AlertOctagon,
 }
 
-function Toast() {
-  const { toastInfo, isModalOpen, setIsModalOpen } = useContext(ToastContext)
-  // useEffect(() => {
-  //   let timer
-  //   if (isModalOpen) {
-  //     timer = setTimeout(() => {
-  //       setIsModalOpen(false) // closeToast should update the state to hide the toast
-  //     }, 2000)
-  //   }
-
-  //   // Cleanup function to clear the timer if the component unmounts
-  //   return () => clearTimeout(timer)
-  // }, [isModalOpen, setIsModalOpen])
+function Toast({ toastInfo }) {
+  const { allToasts, setAllToasts } = useContext(ToastContext)
 
   const closeToast = () => {
-    setIsModalOpen(false)
+    const newToasts = allToasts.filter((toast) => toast.id !== toastInfo.id)
+    setAllToasts(newToasts)
   }
 
-  if (!toastInfo.variant || !toastInfo.message || !isModalOpen) {
+  if (!toastInfo.variant || !toastInfo.message) {
     return null
   }
   const Tag = ICONS_BY_VARIANT[toastInfo?.variant]
@@ -48,10 +38,19 @@ function Toast() {
       <div className={styles.iconContainer}>
         <Tag size={24} />
       </div>
-      <p className={styles.content}>{toastInfo?.message}</p>
-      <button className={styles.closeButton} onClick={closeToast}>
+      <p className={styles.content}>
+        <VisuallyHidden>
+          {ICONS_BY_VARIANT[toastInfo?.variant] - toastInfo?.message}
+        </VisuallyHidden>
+        {toastInfo?.message}
+      </p>
+      <button
+        aria-label='Dismiss message'
+        aria-live='off'
+        className={styles.closeButton}
+        onClick={closeToast}
+      >
         <X size={24} />
-        <VisuallyHidden>Dismiss message</VisuallyHidden>
       </button>
     </div>
   )

@@ -1,31 +1,43 @@
-import React, { useState, useId, useContext } from 'react'
+import React, { useId, useContext } from 'react'
 
-import { ToastContext } from '../App'
+import { ToastContext } from '../ToastProvider'
 
 import styles from './Form.module.css'
 
 import Button from '../Button'
 
 function Form({ toastvariants }) {
-  const { setIsModalOpen, handleToastInfo, isModalOpen } =
+  const { setToastInfo, toastInfo, setAllToasts, allToasts } =
     useContext(ToastContext)
-  const [message, setMessage] = useState('')
-  const [variant, setVariant] = useState('')
   const id = useId()
-  const generatedId = `variant-${id}`
+
+  function generateRandomId() {
+    const randomPart = Math.random().toString(36).substring(2, 15) // Generates a random string
+    const timePart = new Date().getTime().toString(36) // Current timestamp in base 36
+    return `id_${randomPart}_${timePart}`
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    if (message && variant) {
-      handleToastInfo({ message, variant })
-      setIsModalOpen(true)
+    if (toastInfo.message && toastInfo.variant) {
+      setAllToasts([
+        ...allToasts,
+        {
+          id: generateRandomId(),
+          message: toastInfo.message,
+          variant: toastInfo.variant,
+        },
+      ])
     }
-    setVariant('')
-    setMessage('')
+    setToastInfo({ id: '', message: '', variant: 'notice' })
   }
 
-  const handleChange = (event) => {
-    setVariant(event.target.value)
+  const handleChangeVariant = (event) => {
+    setToastInfo({ ...toastInfo, variant: event.target.value })
+  }
+
+  const handleChangeMessage = (event) => {
+    setToastInfo({ ...toastInfo, message: event.target.value })
   }
 
   return (
@@ -40,8 +52,8 @@ function Form({ toastvariants }) {
         </label>
         <div className={styles.inputWrapper}>
           <textarea
-            onChange={(e) => setMessage(e.target.value)}
-            value={message}
+            onChange={handleChangeMessage}
+            value={toastInfo?.message}
             id='message'
             className={styles.messageInput}
           />
@@ -54,12 +66,12 @@ function Form({ toastvariants }) {
           {toastvariants.map((item) => (
             <label key={`variant-${item}`} htmlFor={`variant-${item}`}>
               <input
-                id={generatedId}
+                id={`variant-${item}-${id}`}
                 type='radio'
                 name='variant'
                 value={item}
-                checked={variant === item}
-                onChange={handleChange}
+                checked={toastInfo?.variant === item}
+                onChange={handleChangeVariant}
               />
               {item}
             </label>

@@ -1,27 +1,17 @@
-import React, { createContext, useState } from 'react'
+import React, { createContext } from 'react'
 
 import ToastPlayground from '../ToastPlayground'
+import ToastProvider from '../ToastProvider'
 import Footer from '../Footer'
 
 export const ToastContext = createContext()
 
 function App() {
-  const [toastInfo, setToastInfo] = useState({ message: '', variant: 'notice' })
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const handleToastInfo = (toastInfo) => {
-    setToastInfo(toastInfo)
-  }
-  const value = {
-    toastInfo: toastInfo,
-    handleToastInfo: handleToastInfo,
-    isModalOpen: isModalOpen,
-    setIsModalOpen: setIsModalOpen,
-  }
   return (
-    <ToastContext.Provider value={value}>
+    <ToastProvider>
       <ToastPlayground />
       <Footer />
-    </ToastContext.Provider>
+    </ToastProvider>
   )
 }
 
