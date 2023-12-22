@@ -11,13 +11,7 @@ export default function ToastProvider({ children }) {
     variant: 'notice',
   })
   const [allToasts, setAllToasts] = useState([])
-  const handleEscapePress = useEscapeKey(() => setAllToasts([]), 'Escape')
-  useEffect(() => {
-    document.addEventListener('keydown', handleEscapePress)
-    return () => {
-      document.removeEventListener('keydown', handleEscapePress)
-    }
-  }, [])
+  useEscapeKey(() => setAllToasts([]), 'Escape')
 
   const value = {
     toastInfo,
